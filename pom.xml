@@ -12,14 +12,136 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <java.version>21</java.version>
+    <testng.version>7.8.0</testng.version>
+    <selenium.version>4.15.0</selenium.version>
+    <owner.version>1.0.12</owner.version>
+    <allure.version>2.24.0</allure.version>
+    <webdrivermanager.version>5.6.3</webdrivermanager.version>
+    <maven.surefire.version>3.1.2</maven.surefire.version>
   </properties>
 
   <dependencies>
+    <!-- TestNG -->
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>${testng.version}</version>
+    </dependency>
+
+    <!-- Selenium -->
+    <dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-java</artifactId>
+      <version>${selenium.version}</version>
+    </dependency>
+
+    <!-- WebDriver Manager -->
+    <dependency>
+      <groupId>io.github.bonigarcia</groupId>
+      <artifactId>webdrivermanager</artifactId>
+      <version>${webdrivermanager.version}</version>
+    </dependency>
+
+    <!-- Owner - для работы с properties -->
+    <dependency>
+      <groupId>org.aeonbits.owner</groupId>
+      <artifactId>owner</artifactId>
+      <version>${owner.version}</version>
+    </dependency>
+
+    <!-- Allure Reporting -->
+    <dependency>
+      <groupId>io.qameta.allure</groupId>
+      <artifactId>allure-testng</artifactId>
+      <version>${allure.version}</version>
+    </dependency>
+
+    <!-- Логирование -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>2.22.1</version>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <!-- Компилятор Java -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.11.0</version>
+        <configuration>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+          <encoding>${project.build.sourceEncoding}</encoding>
+        </configuration>
+      </plugin>
+
+      <!-- Surefire Plugin для запуска тестов -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${maven.surefire.version}</version>
+        <configuration>
+          <suiteXmlFiles>
+            <suiteXmlFile>src/test/resources/testng-parallel.xml</suiteXmlFile>
+          </suiteXmlFiles>
+          <systemPropertyVariables>
+            <env>${env}</env>
+          </systemPropertyVariables>
+          <parallel>methods</parallel>
+          <threadCount>10</threadCount>
+          <useUnlimitedThreads>true</useUnlimitedThreads>
+          <properties>
+            <property>
+              <name>suitethreadpoolsize</name>
+              <value>10</value>
+            </property>
+          </properties>
+        </configuration>
+      </plugin>
+
+      <!-- Allure Report -->
+      <plugin>
+        <groupId>io.qameta.allure</groupId>
+        <artifactId>allure-maven</artifactId>
+        <version>2.14.0</version>
+        <configuration>
+          <reportVersion>${allure.version}</reportVersion>
+          <resultsDirectory>${project.build.directory}/allure-results</resultsDirectory>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <!-- Профиль для test окружения -->
+    <profile>
+      <id>test</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <env>test</env>
+      </properties>
+    </profile>
+
+    <!-- Профиль для stage окружения -->
+    <profile>
+      <id>stage</id>
+      <properties>
+        <env>stage</env>
+      </properties>
+    </profile>
+
+    <!-- Профиль для prod окружения -->
+    <profile>
+      <id>prod</id>
+      <properties>
+        <env>prod</env>
+      </properties>
+    </profile>
+  </profiles>
 </project>
