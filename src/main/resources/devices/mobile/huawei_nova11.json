@@ -1,0 +1,22 @@
+{
+  "name": "huawei_nova11",
+  "platformName": "Android",
+  "platformVersion": "12",
+  "deviceName": "Huawei Nova 11",
+  "browserName": "Chrome",
+  "orientation": "PORTRAIT",
+  "isRealDevice": true,
+  "capabilities": {
+    "automationName": "UiAutomator2",
+    "udid": "HUAWEI123456789",
+    "newCommandTimeout": 300,
+    "deviceScreenSize": "1236x2676",
+    "pixelRatio": 2.8,
+    "deviceApiLevel": 31,
+    "skipUnlock": false,
+    "noReset": true,
+    "fullReset": false,
+    "huaweiMobileServices": true,
+    "emulator": false
+  }
+}

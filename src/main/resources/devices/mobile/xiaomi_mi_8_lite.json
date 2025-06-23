@@ -1,0 +1,22 @@
+{
+  "name": "xiaomi_mi8_lite",
+  "platformName": "Android",
+  "platformVersion": "10",
+  "deviceName": "Xiaomi Mi 8 Lite",
+  "browserName": "Chrome",
+  "orientation": "PORTRAIT",
+  "isRealDevice": false,
+  "capabilities": {
+    "automationName": "UiAutomator2",
+    "udid": "emulator-5556",
+    "avd": "mi8_lite_emulator",
+    "newCommandTimeout": 300,
+    "deviceScreenSize": "1080x2280",
+    "pixelRatio": 2.0,
+    "deviceApiLevel": 29,
+    "skipUnlock": true,
+    "noReset": false,
+    "fullReset": false,
+    "chromedriverExecutable": "./drivers/chromedriver_78"
+  }
+}

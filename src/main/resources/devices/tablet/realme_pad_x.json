@@ -1,0 +1,30 @@
+{
+  "name": "realme_pad_x",
+  "platformName": "Android",
+  "platformVersion": "11",
+  "deviceName": "Realme Pad X",
+  "browserName": "Chrome",
+  "orientation": "PORTRAIT",
+  "isRealDevice": false,
+  "capabilities": {
+    "automationName": "UiAutomator2",
+    "udid": "emulator-5560",
+    "avd": "realme_pad_x_emulator",
+    "deviceScreenSize": "1200x2000",
+    "pixelRatio": 2.0,
+    "tabletOnly": true,
+    "skipUnlock": true,
+    "noReset": false,
+    "isHeadless": false,
+    "chromeOptions": {
+      "args": [
+        "--tablet-ui",
+        "--force-device-scale-factor=1.5"
+      ]
+    },
+    "extraCapabilities": {
+      "tabletMode": true,
+      "largeScreen": true
+    }
+  }
+}

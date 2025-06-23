@@ -1,0 +1,27 @@
+{
+  "name": "samsung_tab_s7",
+  "platformName": "Android",
+  "platformVersion": "12",
+  "deviceName": "Samsung Galaxy Tab S7",
+  "browserName": "Chrome",
+  "orientation": "LANDSCAPE",
+  "isRealDevice": true,
+  "capabilities": {
+    "automationName": "UiAutomator2",
+    "udid": "R52M30ABCDE",
+    "deviceScreenSize": "1600x2560",
+    "pixelRatio": 2.5,
+    "tabletOnly": true,
+    "skipUnlock": false,
+    "noReset": true,
+    "fullReset": false,
+    "enableMultiWindow": true,
+    "systemPort": 8201,
+    "chromeOptions": {
+      "args": [
+        "--disable-popup-blocking",
+        "--tablet-ui"
+      ]
+    }
+  }
+}

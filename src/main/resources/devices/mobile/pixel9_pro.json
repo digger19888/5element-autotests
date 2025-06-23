@@ -1,0 +1,22 @@
+{
+  "name": "pixel9_pro",
+  "platformName": "Android",
+  "platformVersion": "14",
+  "deviceName": "Google Pixel 9 Pro",
+  "browserName": "Chrome",
+  "orientation": "PORTRAIT",
+  "isRealDevice": false,
+  "capabilities": {
+    "automationName": "UiAutomator2",
+    "udid": "emulator-5558",
+    "avd": "pixel9_pro_emulator",
+    "newCommandTimeout": 300,
+    "deviceScreenSize": "1344x2992",
+    "pixelRatio": 3.5,
+    "deviceApiLevel": 34,
+    "skipUnlock": true,
+    "noReset": false,
+    "fullReset": false,
+    "gpsEnabled": true
+  }
+}

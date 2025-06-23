@@ -1,0 +1,23 @@
+{
+  "name": "ipad_pro",
+  "platformName": "iOS",
+  "platformVersion": "16",
+  "deviceName": "iPad Pro (12.9-inch) (6th generation)",
+  "browserName": "Safari",
+  "orientation": "LANDSCAPE",
+  "isRealDevice": false,
+  "capabilities": {
+    "automationName": "XCUITest",
+    "udid": "auto",
+    "deviceScreenSize": "2048x2732",
+    "pixelRatio": 2.6,
+    "scaleFactor": "2x",
+    "tabletOnly": true,
+    "safariInitialUrl": "about:blank",
+    "safariAllowPopups": true,
+    "safariIgnoreFraudWarning": true,
+    "safariOpenLinksInBackground": false,
+    "nativeWebTap": true,
+    "startIWDP": true
+  }
+}

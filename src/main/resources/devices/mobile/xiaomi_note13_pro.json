@@ -1,0 +1,21 @@
+{
+  "name": "xiaomi_note13_pro",
+  "platformName": "Android",
+  "platformVersion": "13",
+  "deviceName": "Xiaomi Note 13 Pro",
+  "browserName": "Chrome",
+  "orientation": "PORTRAIT",
+  "isRealDevice": true,
+  "capabilities": {
+    "automationName": "UiAutomator2",
+    "udid": "12ab34cd56ef",
+    "newCommandTimeout": 300,
+    "deviceScreenSize": "1220x2712",
+    "pixelRatio": 3.0,
+    "deviceApiLevel": 33,
+    "skipUnlock": false,
+    "noReset": true,
+    "fullReset": false,
+    "miuiVersion": "MIUI 14"
+  }
+}

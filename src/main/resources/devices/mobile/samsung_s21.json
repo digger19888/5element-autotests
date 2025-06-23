@@ -1,0 +1,21 @@
+{
+  "name": "samsung_s21",
+  "platformName": "Android",
+  "platformVersion": "13",
+  "deviceName": "Samsung Galaxy S21",
+  "browserName": "Chrome",
+  "orientation": "PORTRAIT",
+  "isRealDevice": false,
+  "capabilities": {
+    "automationName": "UiAutomator2",
+    "udid": "emulator-5554",
+    "avd": "s21_emulator",
+    "newCommandTimeout": 300,
+    "deviceScreenSize": "1080x2400",
+    "pixelRatio": 2.5,
+    "deviceApiLevel": 33,
+    "skipUnlock": true,
+    "noReset": false,
+    "fullReset": false
+  }
+}
