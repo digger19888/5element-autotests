@@ -1,78 +1,141 @@
-Automation framework for testing 5element.by with parallel execution across browsers, devices, and environments.
+# 5element.by Automation Framework
 
-🚀 Features
-✔ Parallel Testing on Chrome, Firefox, Edge, Safari (desktop/mobile)
-✔ Multiple Environments: Test, Stage, Production
-✔ Allure Reports with screenshots and device info
-✔ Page Object Model (POM) design
-✔ CI/CD Integration (Jenkins, GitHub Actions)
-✔ Selenoid/Docker support for cross-browser testing
+![Java](https://img.shields.io/badge/Java-21%2B-blue)
+![Maven](https://img.shields.io/badge/Maven-3.9.6-red)
+![TestNG](https://img.shields.io/badge/TestNG-7.8.0-green)
+![Appium](https://img.shields.io/badge/Appium-8.5.1-orange)
 
-⚡ Quick Start
-Prerequisites
-Java 21+
+Framework for automated testing of 5element.by website with support for:
+- Cross-browser testing (Chrome, Firefox, Edge, Safari)
+- Mobile devices (iOS/Android smartphones and tablets)
+- Parallel test execution
+- Multiple environments (test, stage, prod)
+- Allure reporting
 
-Maven 3.9+
+## Framework Structure
+src/
+├── main/
+│ ├── java/
+│ │ └── by/element5/
+│ │ ├── config/ # Configuration classes
+│ │ ├── drivers/ # Driver factories
+│ │ ├── pages/ # Page Objects
+│ │ ├── rest/ # API clients
+│ │ └── utils/ # Utility classes
+│ └── resources/
+│ ├── browsers/ # Browser configs
+│ ├── devices/ # Device configs
+│ └── environments/ # Environment configs
+└── test/
+├── java/
+│ └── by/element5/tests/ # Test classes
+└── resources/
+└── test-suites/ # TestNG suites
 
-Chrome/Firefox/Edge browsers
+text
 
-1. Clone & Build
-   sh
-   git clone https://github.com/your-repo/5element-autotests.git  
-   cd 5element-autotests  
-   mvn clean install
-2. Run Tests
-   Command	Description
-   mvn test	Run on Test env (default)
-   mvn test -Pstage	Run on Stage env
-   mvn test -Pprod	Run on Production env
-   mvn test -Dbrowser=firefox	Run on Firefox only
-   mvn test -Dbrowser=chrome_mobile -Ddevice=iphone12	Mobile test on iPhone 12
-3. Generate Allure Report
-   sh
-   allure serve target/allure-results  
-   📂 Project Structure
-   text
-   src/  
-   ├── main/  
-   │   ├── java/com/element5/  
-   │   │   ├── config/       # Environment configurations  
-   │   │   ├── enums/        # Browser, Device, Environment  
-   │   │   ├── pages/        # Page Objects  
-   │   │   ├── services/     # API/UI services  
-   │   │   └── utils/        # DriverFactory, Allure utils  
-   │   └── resources/  
-   │       ├── config/       # test/stage/prod.properties  
-   │       └── testng/       # TestNG XMLs  
-   └── test/  
-   ├── java/com/element5/  
-   │   ├── api/          # API tests  
-   │   └── ui/           # UI tests  
-   └── resources/        # Test data (JSON/CSV)  
-   ⚙️ Configuration
-   Environment Setup
-   Edit src/main/resources/config/[env].properties:
+## Prerequisites
 
-properties
-# test.properties
-base.url=https://test.5element.by  
-browser=chrome,firefox  
-parallel.threads=5  
-TestNG XML
-Configure parallel runs in testng-parallel.xml:
+- Java 21+
+- Maven 3.9.6+
+- Allure Commandline
+- Node.js (for Appium)
+- Appium Server 2.0+
+- Browsers:
+   - Chrome
+   - Firefox
+   - Edge
+   - Safari (macOS only)
 
-xml
-<suite name="Parallel Suite" parallel="tests" thread-count="5">  
-<test name="Chrome Tests">  
-<parameter name="browser" value="chrome"/>  
-<classes>  
-<class name="com.element5.tests.HomePageTest"/>  
-</classes>  
-</test>  
-</suite>  
-📊 Reporting
-Allure Report includes:
-✅ Test steps with screenshots
-✅ Environment details (URL, browser)
-✅ Device info (for mobile tests)
-✅ Error logs
+## Installation
+
+1. Clone repository:
+```bash
+git clone https://github.com/yourrepo/5element-autotests.git
+cd 5element-autotests
+Install dependencies:
+
+bash
+mvn clean install
+Install Appium (for mobile tests):
+
+bash
+npm install -g appium
+Configuration
+1. Environment Setup
+Edit configuration files in src/main/resources/environments/:
+
+test.json
+
+stage.json
+
+prod.json
+
+Example:
+
+json
+{
+  "name": "test",
+  "baseUrl": "https://test.5element.by",
+  "apiUrl": "https://api.test.5element.by"
+}
+2. Device Configuration
+Add device configs to src/main/resources/devices/:
+
+mobile/ - for smartphones
+
+tablet/ - for tablets
+
+Example smartphone config:
+
+json
+{
+  "name": "samsung_s21",
+  "platformName": "Android",
+  "platformVersion": "13",
+  "deviceName": "Samsung Galaxy S21"
+}
+Running Tests
+Desktop Browsers
+bash
+mvn test -Dbrowser=chrome -Denvironment=test
+Mobile Devices
+bash
+mvn test -Ddevice=iphone12 -DisMobile=true -Denvironment=stage
+Tablets
+bash
+mvn test -Ddevice=ipad_pro -DisTablet=true -Denvironment=test
+Parallel Execution
+Run TestNG suite:
+
+bash
+mvn test -Dsurefire.suiteXmlFiles=src/test/resources/test-suites/parallel-tests.xml
+Reporting
+Generate Allure report:
+
+bash
+mvn allure:serve
+CI/CD Integration
+Example GitHub Actions workflow:
+
+yaml
+name: CI Pipeline
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 21
+      uses: actions/setup-java@v3
+      with:
+        java-version: '21'
+    - name: Run Tests
+      run: mvn test -Denvironment=test
+    - name: Generate Report
+      run: |
+        mvn allure:report
+        mkdir -p allure-results
+        cp -R target/allure-results/* allure-results/
