@@ -16,24 +16,13 @@ import java.time.Duration;
 
 public class DesktopDriverFactory {
     public static WebDriver createDriver(BrowserConfig config) {
-        WebDriver driver;
-
-        switch (config.getName().toLowerCase()) {
-            case "chrome":
-                driver = new ChromeDriver(getChromeOptions(config));
-                break;
-            case "firefox":
-                driver = new FirefoxDriver(getFirefoxOptions(config));
-                break;
-            case "edge":
-                driver = new EdgeDriver(getEdgeOptions(config));
-                break;
-            case "safari":
-                driver = new SafariDriver(getSafariOptions(config));
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported browser: " + config.getName());
-        }
+        WebDriver driver = switch (config.getName().toLowerCase()) {
+            case "chrome" -> new ChromeDriver(getChromeOptions(config));
+            case "firefox" -> new FirefoxDriver(getFirefoxOptions(config));
+            case "edge" -> new EdgeDriver(getEdgeOptions(config));
+            case "safari" -> new SafariDriver(getSafariOptions(config));
+            default -> throw new IllegalArgumentException("Unsupported browser: " + config.getName());
+        };
 
         driver.manage().timeouts()
                 .implicitlyWait(Duration.ofSeconds(config.getImplicitWait()))
