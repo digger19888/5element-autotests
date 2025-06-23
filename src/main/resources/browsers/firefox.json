@@ -1,0 +1,19 @@
+{
+  "name": "firefox",
+  "version": "latest",
+  "headless": false,
+  "windowWidth": 1920,
+  "windowHeight": 1080,
+  "implicitWait": 15,
+  "pageLoadTimeout": 40,
+  "options": [
+    "--width=1920",
+    "--height=1080",
+    "--disable-notifications",
+    "--disable-extensions",
+    "--disable-gpu",
+    "--no-sandbox",
+    "--ignore-certificate-errors",
+    "--language=en-US"
+  ]
+}

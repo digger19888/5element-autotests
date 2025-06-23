@@ -1,0 +1,21 @@
+{
+  "name": "edge",
+  "version": "latest",
+  "headless": false,
+  "windowWidth": 1920,
+  "windowHeight": 1080,
+  "implicitWait": 10,
+  "pageLoadTimeout": 30,
+  "options": [
+    "--start-maximized",
+    "--disable-infobars",
+    "--disable-notifications",
+    "--disable-extensions",
+    "--disable-gpu",
+    "--no-sandbox",
+    "--ignore-certificate-errors",
+    "--remote-allow-origins=*",
+    "--inprivate",
+    "--lang=en-US"
+  ]
+}

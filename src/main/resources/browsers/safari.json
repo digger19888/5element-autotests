@@ -1,0 +1,17 @@
+{
+  "name": "safari",
+  "version": "latest",
+  "headless": false,
+  "windowWidth": 1920,
+  "windowHeight": 1080,
+  "implicitWait": 20,
+  "pageLoadTimeout": 40,
+  "options": [],
+  "capabilities": {
+    "safari:automaticInspection": true,
+    "safari:automaticProfiling": true,
+    "safari:useTechnologyPreview": false,
+    "safari:platformBuildVersion": "21A5506j",
+    "safari:platformVersion": "12.0"
+  }
+}
