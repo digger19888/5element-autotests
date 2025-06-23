@@ -1,4 +1,4 @@
 package com.patio.config;
 
-public class AppConfig {
+public class TestConfig {
 }
