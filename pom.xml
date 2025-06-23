@@ -22,6 +22,7 @@
         <lombok.version>1.18.30</lombok.version>
         <log4j.version>2.20.0</log4j.version>
         <appium.version>8.5.1</appium.version>
+        <aspectj.version>1.9.19</aspectj.version>
     </properties>
 
     <dependencies>
