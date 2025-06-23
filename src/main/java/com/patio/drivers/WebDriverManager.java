@@ -1,6 +1,7 @@
 package com.patio.drivers;
 
 import com.patio.config.TestConfig;
+import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.WebDriver;
 
 public class WebDriverManager {
@@ -24,6 +25,10 @@ public class WebDriverManager {
             driverThreadLocal.set(TabletDriverFactory.createDriver(config.getDevice()));
         } else {
             driverThreadLocal.set(DesktopDriverFactory.createDriver(config.getBrowser()));
+        }
+        if (config.isTablet()) {
+            driverThreadLocal.set(TabletDriverFactory.createDriver(config.getDevice()));
+            TabletDriverFactory.adjustTabletSettings((AppiumDriver) driverThreadLocal.get());
         }
     }
 
