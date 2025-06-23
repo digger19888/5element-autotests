@@ -1,0 +1,12 @@
+{
+  "name": "prod",
+  "baseUrl": "https://5element.by",
+  "apiUrl": "https://api.5element.by",
+  "dbUrl": "jdbc:mysql://prod-db.5element.by:3306",
+  "dbUser": "auto_user",
+  "dbPassword": "secure_password",
+  "users": {
+    "admin": "admin@5element.by:admin123",
+    "customer": "customer@5element.by:customer123"
+  }
+}
