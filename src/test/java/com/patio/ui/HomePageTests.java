@@ -1,6 +1,5 @@
 package com.patio.ui;
 
-import com.patio.BaseTest;
 import com.patio.pages.HomePage;
 import com.patio.pages.SearchResultsPage;
 import org.testng.annotations.Test;
@@ -13,7 +12,7 @@ public class HomePageTests extends BaseTest {
     @Test
     public void verifyHomePageTitle() {
         HomePage homePage = new HomePage(getDriver());
-        String expectedTitle = "5element - интернет-магазин бытовой техники и электроники в Беларуси";
+        String expectedTitle = "5 элемент - интернет-магазин электроники в Беларуси";
 
         assertEquals(homePage.getTitle(), expectedTitle, "Page title is incorrect");
     }

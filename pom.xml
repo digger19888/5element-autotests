@@ -18,7 +18,7 @@
         <selenium.version>4.14.1</selenium.version>
         <testng.version>7.8.0</testng.version>
         <rest-assured.version>5.3.2</rest-assured.version>
-        <allure.version>2.24.0</allure.version>
+        <allure.version>2.22.1</allure.version>
         <lombok.version>1.18.30</lombok.version>
         <log4j.version>2.20.0</log4j.version>
         <appium.version>8.5.1</appium.version>
@@ -81,13 +81,26 @@
         <!-- Allure -->
         <dependency>
             <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-testng</artifactId>
+            <artifactId>allure-rest-assured</artifactId>
             <version>${allure.version}</version>
         </dependency>
         <dependency>
             <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-rest-assured</artifactId>
+            <artifactId>allure-testng</artifactId>
             <version>${allure.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-java-commons</artifactId>
+            <version>${allure.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-junit5</artifactId>
+            <version>${allure.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- Lombok -->
@@ -123,18 +136,51 @@
             <artifactId>jackson-databind</artifactId>
             <version>2.15.3</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.8.1</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <!-- Очистка предыдущих результатов перед тестами -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>3.3.2</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>${project.build.directory}/allure-results</directory>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+            <!-- Запуск тестов -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.7.1</version>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.1.2</version>
+                <version>3.0.0-M4</version>
                 <configuration>
                     <suiteXmlFiles>
-                        <suiteXmlFile>src/test/resources/test-suites/smoke-tests.xml</suiteXmlFile>
+                        <!--                        <suiteXmlFile>src/smoke.xml</suiteXmlFile>-->
+                        <!--                        <suiteXmlFile>src/${suit}</suiteXmlFile>-->
                     </suiteXmlFiles>
+                    <testFailureIgnore>true</testFailureIgnore> <!-- Продолжать при ошибках -->
                     <argLine>
                         -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
                     </argLine>
@@ -149,20 +195,43 @@
                     <dependency>
                         <groupId>org.aspectj</groupId>
                         <artifactId>aspectjweaver</artifactId>
-                        <version>1.9.19</version>
+                        <version>${aspectj.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
-
+            <!-- Автоматический запуск Allure после тестов -->
             <plugin>
-                <groupId>io.qameta.allure</groupId>
-                <artifactId>allure-maven</artifactId>
-                <version>2.12.0</version>
-                <configuration>
-                    <reportVersion>${allure.version}</reportVersion>
-                    <resultsDirectory>${project.build.directory}/allure-results</resultsDirectory>
-                </configuration>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>serve-allure-report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <skip>false</skip> <!-- Не пропускать при ошибках -->
+                            <executable>allure</executable>
+                            <arguments>
+                                <argument>serve</argument>
+                                <argument>${project.build.directory}/allure-results</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
+    <reporting>
+        <plugins>
+            <!-- Генерация HTML-отчетов о результатах выполнения тестов. В папке target/site создается файл surefire-report.html -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>3.0.0-M4</version>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>

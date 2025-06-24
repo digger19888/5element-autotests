@@ -1,4 +1,4 @@
-package com.patio;
+package com.patio.ui;
 
 import com.patio.config.BrowserConfig;
 import com.patio.config.DeviceConfig;
@@ -6,14 +6,17 @@ import com.patio.config.EnvironmentConfig;
 import com.patio.config.TestConfig;
 import com.patio.drivers.WebDriverManager;
 import com.patio.listeners.TestListener;
+import com.patio.utils.AfterTestExtension;
 import com.patio.utils.JsonUtils;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.*;
-
+import org.junit.jupiter.api.extension.ExtendWith;
 import java.lang.reflect.Method;
 
+@ExtendWith(AfterTestExtension.class)
 @Listeners({TestListener.class})
 public class BaseTest {
+
     @BeforeMethod
     @Parameters({"environment", "browser", "device", "isMobile", "isTablet"})
     public void setUp(
@@ -51,7 +54,7 @@ public class BaseTest {
         WebDriverManager.quitDriver();
     }
 
-    protected WebDriver getDriver() {
+    public static WebDriver getDriver() {
         return WebDriverManager.getDriver();
     }
 
