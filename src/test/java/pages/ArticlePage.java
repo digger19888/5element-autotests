@@ -2,6 +2,7 @@ package pages;
 
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
+import io.qameta.allure.Step;
 
 import static com.codeborne.selenide.Selenide.$x;
 
@@ -16,6 +17,7 @@ public class ArticlePage {
     /**
      * Возвращает title страницы
      **/
+    @Step("Get page title")
     public String getTitle() {
         return mainTitles.getOwnText();
     }
@@ -23,6 +25,7 @@ public class ArticlePage {
     /**
      * Возвращает h1 страницы
      **/
+    @Step("Get H1")
     public String getH1() {
         return h1.getOwnText();
     }
@@ -43,6 +46,7 @@ public class ArticlePage {
     public String getNoindex() {
         return noindex.getAttribute("content");
     }
+
 
     public ArticlePage(String url) {
         Selenide.open(url);
