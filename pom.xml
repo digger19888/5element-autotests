@@ -15,52 +15,48 @@
         <java.version>21</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <selenium.version>4.14.1</selenium.version>
-        <testng.version>7.8.0</testng.version>
+        <allure.version>2.29.1</allure.version>
+        <maven.compiler.plugin.version>3.5.1</maven.compiler.plugin.version>
+        <aspectj.version>1.9.6</aspectj.version>
+        <maven-surefire-plugin-version>3.0.0-M5</maven-surefire-plugin-version>
+        <allure.result.directory>target/allure-results</allure.result.directory>
         <rest-assured.version>5.3.2</rest-assured.version>
-        <allure.version>2.22.1</allure.version>
         <lombok.version>1.18.30</lombok.version>
         <log4j.version>2.20.0</log4j.version>
         <appium.version>8.5.1</appium.version>
-        <aspectj.version>1.9.19</aspectj.version>
     </properties>
 
     <dependencies>
-        <!-- Selenium -->
+        <!-- https://mvnrepository.com/artifact/com.codeborne/selenide -->
         <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
-            <version>${selenium.version}</version>
+            <groupId>com.codeborne</groupId>
+            <artifactId>selenide</artifactId>
+            <version>7.9.3</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/io.github.bonigarcia/webdrivermanager -->
+        <dependency>
+            <groupId>io.github.bonigarcia</groupId>
+            <artifactId>webdrivermanager</artifactId>
+            <version>6.1.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/junit/junit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>RELEASE</version>
         </dependency>
         <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-chrome-driver</artifactId>
-            <version>${selenium.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-firefox-driver</artifactId>
-            <version>${selenium.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-edge-driver</artifactId>
-            <version>${selenium.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-safari-driver</artifactId>
-            <version>${selenium.version}</version>
-        </dependency>
-
-        <!-- TestNG -->
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>${testng.version}</version>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-junit5</artifactId>
+            <version>${allure.version}</version>
             <scope>test</scope>
         </dependency>
-
+        <!-- https://mvnrepository.com/artifact/io.qameta.allure/allure-selenide -->
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-selenide</artifactId>
+            <version>${allure.version}</version>
+        </dependency>
         <!-- RestAssured -->
         <dependency>
             <groupId>io.rest-assured</groupId>
@@ -77,32 +73,6 @@
             <artifactId>xml-path</artifactId>
             <version>${rest-assured.version}</version>
         </dependency>
-
-        <!-- Allure -->
-        <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-rest-assured</artifactId>
-            <version>${allure.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-testng</artifactId>
-            <version>${allure.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-java-commons</artifactId>
-            <version>${allure.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-junit5</artifactId>
-            <version>${allure.version}</version>
-            <scope>test</scope>
-        </dependency>
-
         <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -149,10 +119,10 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
-            <!-- Очистка предыдущих результатов перед тестами -->
+
+            <!-- Clean allure-results before run -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
@@ -165,31 +135,31 @@
                     </filesets>
                 </configuration>
             </plugin>
-            <!-- Запуск тестов -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
                 <version>3.7.1</version>
             </plugin>
+
+            <!-- Added Surefire Plugin configuration to execute tests -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M4</version>
+                <version>${maven-surefire-plugin-version}</version>
                 <configuration>
-                    <suiteXmlFiles>
-                        <!--                        <suiteXmlFile>src/smoke.xml</suiteXmlFile>-->
-                        <!--                        <suiteXmlFile>src/${suit}</suiteXmlFile>-->
-                    </suiteXmlFiles>
-                    <testFailureIgnore>true</testFailureIgnore> <!-- Продолжать при ошибках -->
+                    <testFailureIgnore>true</testFailureIgnore>
                     <argLine>
                         -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
                     </argLine>
-                    <systemProperties>
+                    <systemPropertyVariables>
+                        <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
+                    </systemPropertyVariables>
+                    <properties>
                         <property>
-                            <name>allure.results.directory</name>
-                            <value>${project.build.directory}/allure-results</value>
+                            <name>listener</name>
+                            <value>io.qameta.allure.junit5.AllureJunit5</value>
                         </property>
-                    </systemProperties>
+                    </properties>
                 </configuration>
                 <dependencies>
                     <dependency>
@@ -199,7 +169,8 @@
                     </dependency>
                 </dependencies>
             </plugin>
-            <!-- Автоматический запуск Allure после тестов -->
+
+            <!-- Automation running allure report  -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -212,7 +183,7 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <skip>false</skip> <!-- Не пропускать при ошибках -->
+                            <skip>false</skip> <!-- Don't skip if failure -->
                             <executable>allure</executable>
                             <arguments>
                                 <argument>serve</argument>
@@ -226,7 +197,8 @@
     </build>
     <reporting>
         <plugins>
-            <!-- Генерация HTML-отчетов о результатах выполнения тестов. В папке target/site создается файл surefire-report.html -->
+
+            <!-- Generating HTML - report in folder target/site -> surefire-report.html -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-report-plugin</artifactId>
