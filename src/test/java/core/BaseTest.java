@@ -3,8 +3,10 @@ package core;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.logevents.SelenideLogger;
+import config.TestPropertiesConfig;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import io.qameta.allure.selenide.AllureSelenide;
+import org.aeonbits.owner.ConfigFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -19,7 +21,7 @@ abstract public class BaseTest {
         Configuration.browserSize = "1920х1080";
         Configuration.headless = true;
         SelenideLogger.addListener("AllureSelenide", new AllureSelenide());
-        setBaseUrl();
+        setProperties();
 
     }
 
@@ -28,9 +30,9 @@ abstract public class BaseTest {
         setUp();
     }
 
-    private void setBaseUrl() throws IOException {
-        System.getProperties().load(ClassLoader.getSystemResourceAsStream("application.properties"));
-        baseUrl = System.getProperty("base.url");
+    private void setProperties() {
+        TestPropertiesConfig config = ConfigFactory.create(TestPropertiesConfig.class, System.getProperties());
+        baseUrl = config.getBaseUrl();
     }
 
     @AfterEach
