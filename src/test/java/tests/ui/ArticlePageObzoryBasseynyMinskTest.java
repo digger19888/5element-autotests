@@ -8,6 +8,7 @@ import pages.ArticlePage;
 
 import java.io.IOException;
 
+import static config.DriverFactory.baseUrl;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ArticlePageObzoryBasseynyMinskTest extends BaseTest {
