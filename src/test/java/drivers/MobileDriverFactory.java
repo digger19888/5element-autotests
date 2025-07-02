@@ -1,30 +1,33 @@
 package drivers;
 
-import config.DeviceConfig;
+import config.TestPropertiesConfig;
 import io.appium.java_client.android.AndroidDriver;
-import org.openqa.selenium.MutableCapabilities;
+import io.appium.java_client.ios.IOSDriver;
+import io.appium.java_client.remote.MobileCapabilityType;
+import org.aeonbits.owner.ConfigFactory;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 public class MobileDriverFactory {
-    public static WebDriver createDriver(DeviceConfig config) {
-        MutableCapabilities capabilities = new MutableCapabilities();
-        capabilities.setCapability("platformName", config.getPlatformName());
-        capabilities.setCapability("platformVersion", config.getPlatformVersion());
-        capabilities.setCapability("deviceName", config.getDeviceName());
-        capabilities.setCapability("browserName", config.getBrowserName());
-        capabilities.setCapability("orientation", config.getOrientation());
+    public static WebDriver createMobileDriver() throws Exception {
+        TestPropertiesConfig config = ConfigFactory.create(TestPropertiesConfig.class, System.getProperties());
+        String platform = config.getMobilePlatform(); // "android" или "ios"
+        String browser = config.getMobileBrowser(); // "Chrome" или "Safari"
+        String deviceName = config.getMobileDeviceName();
 
-        if (config.getCapabilities() != null) {
-            config.getCapabilities().forEach(capabilities::setCapability);
-        }
+        DesiredCapabilities caps = new DesiredCapabilities();
+        caps.setCapability(MobileCapabilityType.PLATFORM_NAME, platform);
+        caps.setCapability(MobileCapabilityType.DEVICE_NAME, deviceName);
+        caps.setCapability(MobileCapabilityType.BROWSER_NAME, browser);
 
-        try {
-            return new AndroidDriver(new URL("http://localhost:4723/wd/hub"), capabilities);
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("Failed to create mobile driver", e);
+        URL appiumServerUrl = new URL("http://127.0.0.1:4723/wd/hub");
+
+        if (platform.equalsIgnoreCase("android")) {
+            return new AndroidDriver(appiumServerUrl, caps);
+        } else {
+            return new IOSDriver(appiumServerUrl, caps);
         }
     }
 }

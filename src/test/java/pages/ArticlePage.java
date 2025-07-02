@@ -2,53 +2,19 @@ package pages;
 
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
-import io.qameta.allure.Step;
-
-import static com.codeborne.selenide.Selenide.$x;
+import static com.codeborne.selenide.Selenide.$;
 
 public class ArticlePage {
-    private final SelenideElement mainTitles = $x("//html/head/title");
-    private final SelenideElement h1 = $x("//h1[@class=\"section-heading__title\"]");
-    private final SelenideElement canonicalUrl = $x("//*[@rel='canonical']");
-    private final SelenideElement index = $x("//*[@content='index, follow']");
-    private final SelenideElement noindex = $x("//*[@content='noindex, follow']");
+    public void open(String path) {
+        Selenide.open(path);
+    }
 
-
-    /**
-     * Возвращает title страницы
-     **/
-    @Step("Get page title")
     public String getTitle() {
-        return mainTitles.getOwnText();
+        return Selenide.title();
     }
 
-    /**
-     * Возвращает h1 страницы
-     **/
-    @Step("Get H1")
     public String getH1() {
-        return h1.getOwnText();
-    }
-
-    /**
-     * Возвращает canonical url страницы
-     **/
-    public String getCanonicalUrl() {
-        return canonicalUrl.getAttribute("href");
-    }
-
-    /**
-     * Возвращает canonical url страницы
-     **/
-    public String getIndex() {
-        return index.getAttribute("content");
-    }
-    public String getNoindex() {
-        return noindex.getAttribute("content");
-    }
-
-
-    public ArticlePage(String url) {
-        Selenide.open(url);
+        SelenideElement h1 = $("h1");
+        return h1.getText();
     }
 }

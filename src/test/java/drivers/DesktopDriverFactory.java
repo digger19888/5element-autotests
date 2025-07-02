@@ -1,8 +1,9 @@
 package drivers;
 
-import config.BrowserConfig;
+import com.codeborne.selenide.Configuration;
 import config.TestPropertiesConfig;
-import org.openqa.selenium.Dimension;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import org.aeonbits.owner.ConfigFactory;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -13,73 +14,120 @@ import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.safari.SafariDriver;
 import org.openqa.selenium.safari.SafariOptions;
 
-import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DesktopDriverFactory {
-    public static WebDriver createDriver(BrowserConfig config) {
-        WebDriver driver = switch (config.getName().toLowerCase()) {
-            case "chrome" -> new ChromeDriver(getChromeOptions(config));
-            case "firefox" -> new FirefoxDriver(getFirefoxOptions(config));
-            case "edge" -> new EdgeDriver(getEdgeOptions(config));
-            case "safari" -> new SafariDriver(getSafariOptions(config));
-            default -> throw new IllegalArgumentException("Unsupported browser: " + config.getName());
-        };
+    private static TestPropertiesConfig config;
 
-        driver.manage().timeouts()
-                .implicitlyWait(Duration.ofSeconds(config.getImplicitWait()))
-                .pageLoadTimeout(Duration.ofSeconds(config.getPageLoadTimeout()));
+    public static void setupDriverConfig() {
+        config = ConfigFactory.create(TestPropertiesConfig.class, System.getProperties());
+        Configuration.baseUrl = config.getBaseUrl();
+//        Configuration.timeout = 10000;
+        Configuration.headless = config.isHeadless();
 
-        if (config.getWindowWidth() > 0 && config.getWindowHeight() > 0) {
-            driver.manage().window().setSize(new Dimension(config.getWindowWidth(), config.getWindowHeight()));
-        } else {
-            driver.manage().window().maximize();
-        }
-
-        return driver;
+        initBrowserConfiguration();
     }
 
-    private static ChromeOptions getChromeOptions(BrowserConfig config) {
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments(config.getOptions());
-        if (config.isHeadless()) {
-            options.addArguments("--headless=new");
+    private static void initBrowserConfiguration() {
+        String browser = config.getBrowser();
+        boolean isBrowserWebVersion = config.isBrowserWebVersion();
+
+        switch (browser.toLowerCase()) {
+            case "firefox":
+                configureFirefox(isBrowserWebVersion);
+                break;
+            case "edge":
+                configureEdge();
+                break;
+            case "safari":
+                configureSafari();
+                break;
+            default:
+                configureChrome(isBrowserWebVersion);
         }
-        return options;
     }
 
-    private static FirefoxOptions getFirefoxOptions(BrowserConfig config) {
+    private static void configureFirefox(boolean isBrowserWebVersion) {
+        WebDriverManager.firefoxdriver().setup();
+        Configuration.browser = "firefox";
         FirefoxOptions options = new FirefoxOptions();
-        options.addArguments(config.getOptions());
-        if (config.isHeadless()) {
-            options.addArguments("--headless=new");
+
+        if (Configuration.headless) {
+            options.addArguments("--headless");
         }
-        return options;
+        if (isBrowserWebVersion) {
+            options.addArguments("--width=375", "--height=812");
+        }
+
+        Configuration.browserCapabilities = options;
     }
 
-    private static EdgeOptions getEdgeOptions(BrowserConfig config) {
+    private static void configureEdge() {
+        WebDriverManager.edgedriver().setup();
+        Configuration.browser = "edge";
         EdgeOptions options = new EdgeOptions();
-        options.addArguments(config.getOptions());
-        if (config.isHeadless()) {
-            options.addArguments("--headless=new");
+
+        if (Configuration.headless) {
+            options.addArguments("--headless");
         }
-        return options;
+
+        Configuration.browserCapabilities = options;
     }
 
-    private static SafariOptions getSafariOptions(BrowserConfig config) {
+    private static void configureSafari() {
+        WebDriverManager.safaridriver().setup();
+        Configuration.browser = "safari";
         SafariOptions options = new SafariOptions();
 
-        // Safari не поддерживает addArguments, но можно установить другие настройки
-        if (config.isHeadless()) {
-            // Safari не поддерживает headless режим на macOS до версии 13 (Safari 16.4)
-            // В более новых версиях можно использовать:
+        if (Configuration.headless) {
             options.setCapability("safari:automaticInspection", true);
             options.setCapability("safari:automaticProfiling", true);
-//            log.warn("Headless mode is not properly supported in Safari");
         }
 
-        // Другие настройки Safari
         options.setCapability("safari:useTechnologyPreview", false);
+        Configuration.browserCapabilities = options;
+    }
 
-        return options;
+    private static void configureChrome(boolean isBrowserWebVersion) {
+        WebDriverManager.chromedriver().setup();
+        Configuration.browser = "chrome";
+        ChromeOptions options = new ChromeOptions();
+
+        if (Configuration.headless) {
+            options.addArguments("--headless");
+        }
+
+        if (isBrowserWebVersion) {
+            Map<String, Object> deviceMetrics = new HashMap<>();
+            deviceMetrics.put("width", 375);
+            deviceMetrics.put("height", 812);
+            deviceMetrics.put("pixelRatio", 3.0);
+            deviceMetrics.put("touch", true);
+
+            Map<String, Object> mobileEmulation = new HashMap<>();
+            mobileEmulation.put("deviceMetrics", deviceMetrics);
+            mobileEmulation.put("userAgent",
+                    "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1");
+
+            options.setExperimentalOption("mobileEmulation", mobileEmulation);
+        }
+
+        Configuration.browserCapabilities = options;
+    }
+
+    public static WebDriver createDriver() {
+        setupDriverConfig();
+
+        switch (Configuration.browser.toLowerCase()) {
+            case "firefox":
+                return new FirefoxDriver((FirefoxOptions) Configuration.browserCapabilities);
+            case "edge":
+                return new EdgeDriver((EdgeOptions) Configuration.browserCapabilities);
+            case "safari":
+                return new SafariDriver((SafariOptions) Configuration.browserCapabilities);
+            default:
+                return new ChromeDriver((ChromeOptions) Configuration.browserCapabilities);
+        }
     }
 }

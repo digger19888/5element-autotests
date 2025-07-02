@@ -1,42 +1,51 @@
 package drivers;
 
-import config.TestConfig;
+import com.codeborne.selenide.WebDriverRunner;
+import config.TestPropertiesConfig;
 import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.WebDriver;
 
 public class WebDriverManager {
     private static final ThreadLocal<WebDriver> driverThreadLocal = new ThreadLocal<>();
-    private static final ThreadLocal<TestConfig> configThreadLocal = new ThreadLocal<>();
+    private static final ThreadLocal<TestPropertiesConfig> configThreadLocal = new ThreadLocal<>();
 
     public static WebDriver getDriver() {
         return driverThreadLocal.get();
     }
 
-    public static TestConfig getConfig() {
+    public static TestPropertiesConfig getConfig() {
         return configThreadLocal.get();
     }
 
-    public static void initDriver(TestConfig config) {
+    public static void initDriver(TestPropertiesConfig config) throws Exception {
         configThreadLocal.set(config);
 
-        if (config.isMobile()) {
-            driverThreadLocal.set(MobileDriverFactory.createDriver(config.getDevice()));
-        } else if (config.isTablet()) {
-            driverThreadLocal.set(TabletDriverFactory.createDriver(config.getDevice()));
-        } else {
-            driverThreadLocal.set(DesktopDriverFactory.createDriver(config.getBrowser()));
+        if (config.isMobileTesting()) {
+            driverThreadLocal.set(MobileDriverFactory.createMobileDriver());
         }
-        if (config.isTablet()) {
-            driverThreadLocal.set(TabletDriverFactory.createDriver(config.getDevice()));
-            TabletDriverFactory.adjustTabletSettings((AppiumDriver) driverThreadLocal.get());
+        else if (config.isTabletTesting()) {
+            WebDriver tabletDriver = TabletDriverFactory.createDriver(config);
+            driverThreadLocal.set(tabletDriver);
+            TabletDriverFactory.adjustTabletSettings((AppiumDriver) tabletDriver);
         }
+        else {
+            // Для десктопных браузеров
+            driverThreadLocal.set(DesktopDriverFactory.createDriver());
+        }
+
+        // Для совместимости с Selenide
+        WebDriverRunner.setWebDriver(driverThreadLocal.get());
     }
 
     public static void quitDriver() {
-        if (driverThreadLocal.get() != null) {
-            driverThreadLocal.get().quit();
-            driverThreadLocal.remove();
-            configThreadLocal.remove();
+        WebDriver driver = driverThreadLocal.get();
+        if (driver != null) {
+            try {
+                driver.quit();
+            } finally {
+                driverThreadLocal.remove();
+                configThreadLocal.remove();
+            }
         }
     }
 }

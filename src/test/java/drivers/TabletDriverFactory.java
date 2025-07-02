@@ -1,6 +1,6 @@
 package drivers;
 
-import config.DeviceConfig;
+import config.TestPropertiesConfig;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
@@ -21,37 +21,29 @@ public class TabletDriverFactory {
     private static final Logger log = LogManager.getLogger(TabletDriverFactory.class);
     private static final String APPIUM_SERVER_URL = "http://localhost:4723/wd/hub";
 
-    public static WebDriver createDriver(DeviceConfig config) {
-        log.info("Creating tablet driver for: {}", config.getName());
+    public static WebDriver createDriver(TestPropertiesConfig config) {
+        log.info("Creating tablet driver for: {}", config.getTabletName());
 
-        String platform = config.getPlatformName().toLowerCase();
+        String platform = config.getTabletPlatformName().toLowerCase();
 
-        switch (platform) {
-            case "ios":
-                return createIpadDriver(config);
-            case "android":
-                return createAndroidTabletDriver(config);
-            default:
-                throw new IllegalArgumentException("Unsupported tablet platform: " + platform);
-        }
+        return switch (platform) {
+            case "ios" -> createIpadDriver(config);
+            case "android" -> createAndroidTabletDriver(config);
+            default -> throw new IllegalArgumentException("Unsupported tablet platform: " + platform);
+        };
     }
 
-    private static WebDriver createIpadDriver(DeviceConfig config) {
+    private static WebDriver createIpadDriver(TestPropertiesConfig config) {
         DesiredCapabilities capabilities = new DesiredCapabilities();
 
         // Базовые capabilities для iPad
-        capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, config.getPlatformName());
-        capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, config.getPlatformVersion());
-        capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, config.getDeviceName());
-        capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, config.getBrowserName());
-        capabilities.setCapability(MobileCapabilityType.ORIENTATION, config.getOrientation());
+        capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, config.getTabletPlatformName());
+        capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, config.getTabletPlatformVersion());
+        capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, config.getTabletDeviceName());
+        capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, config.getTabletBrowserName());
+        capabilities.setCapability(MobileCapabilityType.ORIENTATION, config.getTabletOrientation());
         capabilities.setCapability("tabletOnly", true);
         capabilities.setCapability("scaleFactor", "2x");
-
-        // Дополнительные capabilities из конфига
-        if (config.getCapabilities() != null) {
-            config.getCapabilities().forEach(capabilities::setCapability);
-        }
 
         log.info("iPad capabilities: {}", capabilities.asMap());
 
@@ -64,15 +56,15 @@ public class TabletDriverFactory {
         }
     }
 
-    private static WebDriver createAndroidTabletDriver(DeviceConfig config) {
+    private static WebDriver createAndroidTabletDriver(TestPropertiesConfig config) {
         MutableCapabilities capabilities = new MutableCapabilities();
 
         // Базовые capabilities для Android планшетов
-        capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, config.getPlatformName());
-        capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, config.getPlatformVersion());
-        capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, config.getDeviceName());
-        capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, config.getBrowserName());
-        capabilities.setCapability(MobileCapabilityType.ORIENTATION, config.getOrientation());
+        capabilities.setCapability(MobileCapabilityType.PLATFORM_NAME, config.getTabletPlatformName());
+        capabilities.setCapability(MobileCapabilityType.PLATFORM_VERSION, config.getTabletPlatformVersion());
+        capabilities.setCapability(MobileCapabilityType.DEVICE_NAME, config.getTabletDeviceName());
+        capabilities.setCapability(MobileCapabilityType.BROWSER_NAME, config.getTabletBrowserName());
+        capabilities.setCapability(MobileCapabilityType.ORIENTATION, config.getTabletOrientation());
         capabilities.setCapability("tabletUi", true);
         capabilities.setCapability("largeScreen", true);
 
@@ -80,11 +72,6 @@ public class TabletDriverFactory {
         Map<String, Object> chromeOptions = new HashMap<>();
         chromeOptions.put("args", new String[]{"--tablet-ui", "--force-device-scale-factor=1.5"});
         capabilities.setCapability("goog:chromeOptions", chromeOptions);
-
-        // Дополнительные capabilities из конфига
-        if (config.getCapabilities() != null) {
-            config.getCapabilities().forEach(capabilities::setCapability);
-        }
 
         log.info("Android Tablet capabilities: {}", capabilities.asMap());
 
