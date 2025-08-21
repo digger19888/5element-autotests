@@ -25,6 +25,10 @@ public interface TestPropertiesConfig extends Config {
     @Key("browser.web.version")
     boolean isBrowserWebVersion();
 
+    @Key("browser.size")
+    @DefaultValue("1920x1080")
+    String getBrowserSize();
+
     @Key("mobile.testing")
     boolean isMobileTesting();
 

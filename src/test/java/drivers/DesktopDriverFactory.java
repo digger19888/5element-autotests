@@ -25,7 +25,7 @@ public class DesktopDriverFactory {
         Configuration.baseUrl = config.getBaseUrl();
 //        Configuration.timeout = 10000;
         Configuration.headless = config.isHeadless();
-
+        Configuration.browserSize = config.getBrowserSize();
         initBrowserConfiguration();
     }
 
@@ -97,6 +97,13 @@ public class DesktopDriverFactory {
         if (Configuration.headless) {
             options.addArguments("--headless");
         }
+        Configuration.browserSize = config.getBrowserSize();
+
+        options.addArguments("--window-size=" + config.getBrowserSize());
+        options.addArguments("--start-maximized=false");
+
+        options.setExperimentalOption("useAutomationExtension", false);
+        options.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
 
         if (isBrowserWebVersion) {
             Map<String, Object> deviceMetrics = new HashMap<>();
@@ -114,6 +121,7 @@ public class DesktopDriverFactory {
         }
 
         Configuration.browserCapabilities = options;
+
     }
 
     public static WebDriver createDriver() {
