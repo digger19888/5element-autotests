@@ -1,5 +1,6 @@
 package core;
 
+import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import config.TestPropertiesConfig;
 import drivers.WebDriverManager;
@@ -18,8 +19,9 @@ abstract public class BaseTest {
 
         // Открываем базовый URL
         WebDriverManager.getDriver().get(WebDriverManager.getConfig().getBaseUrl());
-
-        SelenideLogger.addListener("AllureSelenide", new AllureSelenide());
+        SelenideLogger.addListener("AllureSelenide", new AllureSelenide().screenshots(true).savePageSource(true));
+        Selenide.clearBrowserCookies();
+        Selenide.clearBrowserLocalStorage();
     }
 
     @AfterEach
