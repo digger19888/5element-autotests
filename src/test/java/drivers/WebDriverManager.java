@@ -2,7 +2,6 @@ package drivers;
 
 import com.codeborne.selenide.WebDriverRunner;
 import config.TestPropertiesConfig;
-import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.WebDriver;
 
 public class WebDriverManager {
@@ -21,12 +20,23 @@ public class WebDriverManager {
         configThreadLocal.set(config);
 
         if (config.isMobileTesting()) {
-            driverThreadLocal.set(MobileDriverFactory.createMobileDriver());
+            try {
+                Class<?> factoryClass = Class.forName("drivers.MobileDriverFactory");
+                java.lang.reflect.Method createMethod = factoryClass.getMethod("createMobileDriver");
+                driverThreadLocal.set((WebDriver) createMethod.invoke(null));
+            } catch (Exception e) {
+                throw new RuntimeException(
+                    "Failed to start mobile testing. Please ensure:\n" +
+                    "1. Appium server is running (start with: appium)\n" +
+                    "2. Appium is installed: npm install -g appium\n" +
+                    "3. Required drivers are installed (e.g., uiautomator2 for Android)\n" +
+                    "Original error: " + e.getMessage(), e);
+            }
         }
         else if (config.isTabletTesting()) {
-            WebDriver tabletDriver = TabletDriverFactory.createDriver(config);
+            WebDriver tabletDriver = createTabletDriver(config);
             driverThreadLocal.set(tabletDriver);
-            TabletDriverFactory.adjustTabletSettings((AppiumDriver) tabletDriver);
+            adjustTabletSettings(tabletDriver);
         }
         else {
             // Для десктопных браузеров
@@ -35,6 +45,20 @@ public class WebDriverManager {
 
         // Для совместимости с Selenide
         WebDriverRunner.setWebDriver(driverThreadLocal.get());
+    }
+
+    @SuppressWarnings("unchecked")
+    private static WebDriver createTabletDriver(TestPropertiesConfig config) throws Exception {
+        Class<?> factoryClass = Class.forName("drivers.TabletDriverFactory");
+        java.lang.reflect.Method createMethod = factoryClass.getMethod("createDriver", TestPropertiesConfig.class);
+        return (WebDriver) createMethod.invoke(null, config);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void adjustTabletSettings(WebDriver driver) throws Exception {
+        Class<?> factoryClass = Class.forName("drivers.TabletDriverFactory");
+        java.lang.reflect.Method adjustMethod = factoryClass.getMethod("adjustTabletSettings", WebDriver.class);
+        adjustMethod.invoke(null, driver);
     }
 
     public static void quitDriver() {

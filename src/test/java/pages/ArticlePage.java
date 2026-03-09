@@ -2,9 +2,14 @@ package pages;
 
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
+import core.BasePage;
+
 import static com.codeborne.selenide.Selenide.$;
 
-public class ArticlePage {
+public class ArticlePage extends BasePage {
+    
+    private final SelenideElement h1Heading = $("h1");
+
     public void open(String path) {
         Selenide.open(path);
     }
@@ -14,7 +19,6 @@ public class ArticlePage {
     }
 
     public String getH1() {
-        SelenideElement h1 = $("h1");
-        return h1.getText();
+        return h1Heading.getText();
     }
 }

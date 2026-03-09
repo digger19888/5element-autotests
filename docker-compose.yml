@@ -1,0 +1,74 @@
+version: '3'
+
+services:
+  # Selenium Hub - central point for managing test sessions
+  selenium-hub:
+    image: selenium/hub:4.15.0
+    container_name: selenium-hub
+    ports:
+      - "4442:4442"
+      - "4443:4443"
+      - "4444:4444"
+    networks:
+      - grid
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4444/status"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
+  # Chrome Node
+  chrome:
+    image: selenium/node-chrome:4.15.0
+    container_name: selenium-chrome
+    depends_on:
+      - selenium-hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_NODE_MAX_SESSIONS=2
+    networks:
+      - grid
+    volumes:
+      - /dev/shm:/dev/shm
+
+  # Firefox Node
+  firefox:
+    image: selenium/node-firefox:4.15.0
+    container_name: selenium-firefox
+    depends_on:
+      - selenium-hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_NODE_MAX_SESSIONS=2
+    networks:
+      - grid
+    volumes:
+      - /dev/shm:/dev/shm
+
+  # Chrome Node with VNC (for debugging)
+  chrome-debug:
+    image: selenium/node-chrome:4.15.0
+    container_name: selenium-chrome-debug
+    depends_on:
+      - selenium-hub
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_NODE_MAX_SESSIONS=1
+    ports:
+      - "5900:5900"
+    networks:
+      - grid
+    volumes:
+      - /dev/shm:/dev/shm
+    # Uncomment below to enable VNC password
+    # command: /opt/bin/entry_point.sh --vnc-password=secret
+
+networks:
+  grid:
+    driver: bridge

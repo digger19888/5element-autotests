@@ -4,16 +4,21 @@ import com.codeborne.selenide.Condition;
 import core.BaseTest;
 import io.qameta.allure.Step;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import pages.MainPage;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
+@Tag("smoke")
+@Tag("ui")
 public class MainPageTests extends BaseTest {
 
     private final MainPage mainPage = new MainPage();
 
     @Test
+    @Tag("smoke")
+    @DisplayName("Main Page - Verify all key elements visibility")
     public void testMainPageElementsVisibility() {
         checkLogoVisibility();
         checkSearchFieldVisibility();
@@ -21,28 +26,37 @@ public class MainPageTests extends BaseTest {
         checkContactsVisibility();
     }
 
-    @Step("Проверить видимость логотипа")
+
+    @Step("Verify logo visibility")
     private void checkLogoVisibility() {
         mainPage.waitUntilLogoVisible();
-        assertTrue(mainPage.isLogoVisible(), "Логотип должен быть виден");
+        assertThat(mainPage.isLogoVisible())
+                .as("Logo search field must be visible")
+                .isTrue();
     }
 
-    @Step("Проверить видимость поля поиска")
+    @Step("Verify global search field visibility")
     private void checkSearchFieldVisibility() {
         mainPage.waitUntilSearchFieldVisible();
-        assertTrue(mainPage.isSearchFieldVisible(), "Поле глобального поиска должно быть видимым");
+        assertThat(mainPage.isSearchFieldVisible())
+                .as("Global search field must be visible")
+                .isTrue();
     }
 
-    @Step("Проверить видимость главного меню(кнопка каталога)")
+    @Step("Verify main menu (catalog button) visibility")
     private void checkMainMenuVisibility() {
         mainPage.waitUntilMainMenuVisibility();
-        assertTrue(mainPage.isMainMenuVisible(), "Главное меню(кнопка каталога) должно быть видно");
+        assertThat(mainPage.isMainMenuVisible())
+                .as("Main menu (catalog button) must be visible")
+                .isTrue();
     }
 
-    @Step("Проверить видимость контактной информации")
+    @Step("Verify contact information visibility")
     private void checkContactsVisibility() {
         mainPage.waitUntilContactsLinkVisibility();
-        assertTrue(mainPage.isContactsInfoVisible(), "Контактная информация должна быть видна");
+        assertThat(mainPage.isContactsInfoVisible())
+                .as("Contact information must be visible")
+                .isTrue();
     }
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "test",
-  "baseUrl": "https://test.5el.by",
+  "baseUrl": "https://5element.patio-minsk.by",
   "apiUrl": "https://api.5element.by",
   "dbUrl": "jdbc:mysql://prod-db.5element.by:3306",
   "dbUser": "auto_user",

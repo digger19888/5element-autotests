@@ -23,7 +23,13 @@
         <rest-assured.version>5.3.2</rest-assured.version>
         <lombok.version>1.18.30</lombok.version>
         <log4j.version>2.20.0</log4j.version>
-        <appium.version>8.5.1</appium.version>
+        <appium.version>9.4.0</appium.version>
+        <assertj.version>3.25.3</assertj.version>
+        <checkstyle.version>10.12.7</checkstyle.version>
+        <jacoco.version>0.8.11</jacoco.version>
+        <!-- Default test groups -->
+        <test.groups>smoke</test.groups>
+        <test.excludedGroups>regression</test.excludedGroups>
     </properties>
 
     <dependencies>
@@ -94,13 +100,6 @@
             <version>${log4j.version}</version>
         </dependency>
 
-        <!-- Appium -->
-        <dependency>
-            <groupId>io.appium</groupId>
-            <artifactId>java-client</artifactId>
-            <version>${appium.version}</version>
-        </dependency>
-
         <!-- JSON Processing -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -111,6 +110,13 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>5.10.0</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- AssertJ -->
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>${assertj.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -142,9 +148,10 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin-version}</version>
                 <configuration>
-                    <testFailureIgnore>true</testFailureIgnore>
+                    <testFailureIgnore>false</testFailureIgnore>
                     <argLine>
                         -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+                        @{argLine}
                     </argLine>
                     <systemPropertyVariables>
                         <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
@@ -155,6 +162,9 @@
                             <value>io.qameta.allure.junit5.AllureJunit5</value>
                         </property>
                     </properties>
+                    <!-- Test tagging support - disabled for mobile testing -->
+                    <groups>${test.groups}</groups>
+                    <excludedGroups>${test.excludedGroups}</excludedGroups>
                 </configuration>
                 <dependencies>
                     <dependency>
@@ -165,31 +175,99 @@
                 </dependencies>
             </plugin>
 
-            <!-- Automation running allure report  -->
+            <!-- Automation running allure report after tests -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <executions>
                     <execution>
-                        <id>serve-allure-report</id>
+                        <id>allure-report</id>
                         <phase>test</phase>
                         <goals>
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <skip>false</skip> <!-- Don't skip if failure -->
                             <executable>allure</executable>
                             <arguments>
                                 <argument>serve</argument>
                                 <argument>${project.build.directory}/allure-results</argument>
                             </arguments>
+                            <skip>${maven.test.failure.ignore}</skip>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- JaCoCo Code Coverage -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Checkstyle Code Quality -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.3.1</version>
+                <configuration>
+                    <configLocation>google_checks.xml</configLocation>
+                    <encoding>UTF-8</encoding>
+                    <consoleOutput>true</consoleOutput>
+                    <failsOnError>false</failsOnError>
+                    <linkXRef>false</linkXRef>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>${checkstyle.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!-- Mobile testing profile - activate with: mvn test -Pmobile -->
+        <profile>
+            <id>mobile</id>
+            <activation>
+                <property>
+                    <name>mobile</name>
+                </property>
+            </activation>
+            <properties>
+                <!-- Run all tests for mobile (no tag filtering) -->
+                <test.groups></test.groups>
+                <test.excludedGroups></test.excludedGroups>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>io.appium</groupId>
+                    <artifactId>java-client</artifactId>
+                    <version>${appium.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
     <reporting>
         <plugins>
 
