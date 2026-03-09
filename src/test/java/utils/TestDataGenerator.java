@@ -92,4 +92,23 @@ public class TestDataGenerator {
         }
         return sb.toString();
     }
+
+    public static User createValidAuthUser() {
+        return User.builder()
+                .email(generateUniqueEmail())
+                .password("TestPass123!")
+                .authenticated(false)
+                .build();
+    }
+
+    public static User createExistingUser() {
+        // Test user that should exist in the system
+        return User.builder()
+                .email("test@5element.by")
+                .password("Test123!")
+                .firstName("Test")
+                .lastName("User")
+                .authenticated(false)
+                .build();
+    }
 }

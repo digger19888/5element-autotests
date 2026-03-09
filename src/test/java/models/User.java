@@ -11,4 +11,8 @@ public class User {
     private String firstName;
     private String lastName;
     private String phone;
+    
+    // Authentication-specific fields
+    private String token;
+    private boolean authenticated;
 }
