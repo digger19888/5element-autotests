@@ -62,10 +62,6 @@ public class PersonalCabinetPage extends BasePage {
         return ordersLink.is(visible);
     }
 
-//    public boolean isProfileLinkVisible() {
-//        return profileLink.is(visible);
-//    }
-
     public boolean isFavoritesLinkVisible() {
         return favoritesLink.is(visible);
     }
@@ -74,24 +70,10 @@ public class PersonalCabinetPage extends BasePage {
         return headerUserName.is(visible) || logoutIcon.is(visible);
     }
 
-//    public String getUserName() {
-//        if (isUserNameDisplayed()) {
-//            return userNameDisplay.getText();
-//        }
-//        return "";
-//    }
-
     public void logOutPersonalCabinet() {
         headerUserLoginLink.hover();
         logOutLink.click();
     }
-
-//    public String getUserEmail() {
-//        if (isUserEmailDisplayed()) {
-//            return userEmailDisplay.getText();
-//        }
-//        return "";
-//    }
 
     public void clickLogout() {
         if (isLogoutButtonVisible()) {
@@ -104,12 +86,6 @@ public class PersonalCabinetPage extends BasePage {
             ordersLink.click();
         }
     }
-
-//    public void clickProfileLink() {
-//        if (isProfileLinkVisible()) {
-//            profileLink.click();
-//        }
-//    }
 
     public void clickFavoritesLink() {
         if (isFavoritesLinkVisible()) {

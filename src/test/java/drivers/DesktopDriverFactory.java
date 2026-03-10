@@ -23,7 +23,6 @@ public class DesktopDriverFactory {
     public static void setupDriverConfig() {
         config = ConfigFactory.create(TestPropertiesConfig.class, System.getProperties());
         Configuration.baseUrl = config.getBaseUrl();
-//        Configuration.timeout = 10000;
         Configuration.headless = config.isHeadless();
         Configuration.browserSize = config.getBrowserSize();
         initBrowserConfiguration();

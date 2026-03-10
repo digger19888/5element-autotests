@@ -39,11 +39,8 @@ public class WebDriverManager {
             adjustTabletSettings(tabletDriver);
         }
         else {
-            // Для десктопных браузеров
             driverThreadLocal.set(DesktopDriverFactory.createDriver());
         }
-
-        // Для совместимости с Selenide
         WebDriverRunner.setWebDriver(driverThreadLocal.get());
     }
 
