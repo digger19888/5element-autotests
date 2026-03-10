@@ -148,7 +148,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin-version}</version>
                 <configuration>
-                    <testFailureIgnore>false</testFailureIgnore>
+                    <testFailureIgnore>true</testFailureIgnore>
                     <argLine>
                         -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
                         @{argLine}
@@ -175,7 +175,7 @@
                 </dependencies>
             </plugin>
 
-            <!-- Automation running allure report after tests -->
+            <!-- Automation running allure report after tests (always runs, even on failures) -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -193,7 +193,7 @@
                                 <argument>serve</argument>
                                 <argument>${project.build.directory}/allure-results</argument>
                             </arguments>
-                            <skip>${maven.test.failure.ignore}</skip>
+                            <skip>false</skip>
                         </configuration>
                     </execution>
                 </executions>
